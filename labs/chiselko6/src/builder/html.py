@@ -11,8 +11,24 @@ from ..schema.level import Level
 from .constants import ATTR_TYPES, DIR
 
 
+def gen_dim_link(dim: Dimension) -> str:
+    return os.path.join(DIR, f'dim/{dim.id}.html')
+
+
+def gen_level_link(level: Level) -> str:
+    return os.path.join(DIR, f'level/{level.id}.html')
+
+
+def gen_attr_link(attr: Attr) -> str:
+    return os.path.join(DIR, f'attr/{attr.id}.html')
+
+
+def gen_hier_link(hier: Hierarchy) -> str:
+    return os.path.join(DIR, f'hier/{hier.id}.html')
+
+
 def build_dim(dim: Dimension) -> str:
-    initial = f'<b id={dim.id} style="font-size: 32px;">{dim.name}</b>'
+    initial = f'<h1>Dimension: <b>{dim.name}</b></h1>'
     level_wrapper = '<div style="margin-left: 16px;">{}</div>'
     html_levels = []
     for level in dim.levels:
@@ -27,7 +43,7 @@ def build_dim(dim: Dimension) -> str:
 
 
 def build_level(level: Level) -> str:
-    initial = f'<i id={level.id} style="font-size: 24px;">{level.name}</i>'
+    initial = f'<i style="font-size: 24px;"><a href="{gen_level_link(level)}">{level.name}</a></i>'
     mapped = []
     attr_wrapper = '<div style="margin-left: 16px;">{}</div>'
     for attr in level.attrs:
@@ -36,17 +52,46 @@ def build_level(level: Level) -> str:
     return f'<div style="margin-left: 16px;">{initial}{all_attrs}</div>'
 
 
-def build_attr(attr: Attr) -> str:
-    return f'<span id={attr.id} style="font-size: 16px;">{attr.name}({ATTR_TYPES[attr.type]})</span>'
-
-
 def build_hierarchy(hier: Hierarchy) -> str:
     html_levels = []
     for level in hier.levels:
-        level_link = os.path.join(DIR, f'{hier.dim.id}.html#{level.id}')
-        html_levels.append(f'<a href="{level_link}">{level.name}</a>')
+        html_levels.append(
+            f'<a href="{gen_level_link(level)}">{level.name}</a>')
     all_levels = ', '.join(html_levels)
     return f'<div><b style="font-size: 24px;">{hier.name}</b>: {all_levels}</div>'
+
+
+def build_attr(attr: Attr) -> str:
+    return f'<span style="font-size: 16px;"><a href="{gen_attr_link(attr)}">{attr.name} ({ATTR_TYPES[attr.type]})</a></span>'
+
+
+def build_extended_attr(attr: Attr) -> str:
+    props = f'<div><h1>Attribute: <b>{attr.name}</b> ({ATTR_TYPES[attr.type]})</h1></div>'
+    level = f'<div><h3>Level:  <i><a href="{gen_level_link(attr.level)}">{attr.level.name}</a></i></h3></div>'
+    dim = f'<div><span>Dimension: <a href="{gen_dim_link(attr.level.dim)}">{attr.level.dim.name}</a></span></div>'
+    return f'<div>{props}{level}{dim}</div>'
+
+
+def build_extended_level(level: Level) -> str:
+    initial = f'<div><h1>Level: <b>{level.name}</b></h1></div>'
+    dim = f'<div><h3>Dimension: <i><a href="{gen_dim_link(level.dim)}">{level.dim.name}</a></i></h3></div>'
+    mapped = []
+    attr_wrapper = '<div style="margin-left: 32px;">{}</div>'
+    for attr in level.attrs:
+        mapped.append(attr_wrapper.format(build_attr(attr)))
+    all_attrs = ''.join(mapped)
+    return f'<div>{initial}{dim}{all_attrs}</div>'
+
+
+def build_extended_hierarchy(hier: Hierarchy) -> str:
+    initial = f'<div><h1>Hierarchy: <b>{hier.name}</b></h1></div>'
+    dim = f'<div><h3>Dimension: <i><a href="{gen_dim_link(hier.dim)}">{hier.dim.name}</a></i></h3></div>'
+    html_levels = []
+    for level in hier.levels:
+        html_levels.append(
+            f'<a href="{gen_level_link(level)}">{level.name}</a>')
+    all_levels = ', '.join(html_levels)
+    return f'<div>{initial}{dim}<div><h3>Levels: {all_levels}</h3></div></div>'
 
 
 def build_entity(entity: Entity) -> str:
@@ -70,10 +115,26 @@ def build(dims: Iterable[Dimension], entities: Iterable[Entity]) -> None:
     if os.path.exists(DIR):
         shutil.rmtree(DIR)
     os.makedirs(os.path.join(DIR, 'entity'))
+    os.makedirs(os.path.join(DIR, 'dim'))
+    os.makedirs(os.path.join(DIR, 'level'))
+    os.makedirs(os.path.join(DIR, 'hier'))
+    os.makedirs(os.path.join(DIR, 'attr'))
     for dim in dims:
         res = build_dim(dim)
-        with open(os.path.join(DIR, f'{dim.id}.html'), 'w') as fout:
+        with open(os.path.join(DIR, f'dim/{dim.id}.html'), 'w') as fout:
             fout.write(res)
+        for level in dim.levels:
+            res = build_extended_level(level)
+            with open(os.path.join(DIR, f'level/{level.id}.html'), 'w') as fout:
+                fout.write(res)
+            for attr in level.attrs:
+                res = build_extended_attr(attr)
+                with open(os.path.join(DIR, f'attr/{attr.id}.html'), 'w') as fout:
+                    fout.write(res)
+        for hier in dim.hiers:
+            res = build_extended_hierarchy(hier)
+            with open(os.path.join(DIR, f'hier/{level.id}.html'), 'w') as fout:
+                fout.write(res)
     for e in entities:
         res = build_entity(e)
         with open(os.path.join(DIR, f'entity/{e.id}.html'), 'w') as fout:
