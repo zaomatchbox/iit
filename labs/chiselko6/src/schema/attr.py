@@ -10,6 +10,11 @@ class Attr:
         self.id = uuid4()
         self.name = name
         self.type = type
+        self.level = None
+
+    def assign_level(self, level: 'Level') -> 'Attr':
+        self.level = level
+        return self
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Attr):

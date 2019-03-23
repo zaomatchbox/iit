@@ -5,6 +5,7 @@ import shutil
 from ..schema.attr import Attr
 from ..schema.dim import Dimension
 from ..schema.entity import Entity
+from ..schema.hier import Hierarchy
 from ..schema.level import Level
 
 from .constants import DIR
@@ -13,11 +14,16 @@ from .constants import DIR
 def build_dim(dim: Dimension) -> str:
     initial = f'<b id={dim.id} style="font-size: 32px;">{dim.name}</b>'
     level_wrapper = '<div style="margin-left: 16px;">{}</div>'
-    mapped = []
+    html_levels = []
     for level in dim.levels:
-        mapped.append(level_wrapper.format(build_level(level)))
-    g = ''.join(mapped)
-    return f'<div>{initial}{g}</div>'
+        html_levels.append(level_wrapper.format(build_level(level)))
+    hier_wrapper = '<div style="margin-left: 16px;">{}</div>'
+    html_hiers = []
+    for hier in dim.hiers:
+        html_hiers.append(hier_wrapper.format(build_hierarchy(hier)))
+    all_levels = ''.join(html_levels)
+    all_hiers = ''.join(html_hiers)
+    return f'<div>{initial}<div></div>{all_levels}</div><div>{all_hiers}</div>'
 
 
 def build_level(level: Level) -> str:
@@ -26,8 +32,8 @@ def build_level(level: Level) -> str:
     attr_wrapper = '<div style="margin-left: 16px;">{}</div>'
     for attr in level.attrs:
         mapped.append(attr_wrapper.format(build_attr(attr)))
-    g = ''.join(mapped)
-    return f'<div style="margin-left: 16px;">{initial}{g}</div>'
+    all_attrs = ''.join(mapped)
+    return f'<div style="margin-left: 16px;">{initial}{all_attrs}</div>'
 
 
 def build_attr(attr: Attr) -> str:
@@ -36,6 +42,15 @@ def build_attr(attr: Attr) -> str:
         'string': 'Str',
     }
     return f'<span id={attr.id} style="font-size: 16px;">{attr.name}({format[attr.type]})</span>'
+
+
+def build_hierarchy(hier: Hierarchy) -> str:
+    html_levels = []
+    for level in hier.levels:
+        level_link = os.path.join(DIR, f'{hier.dim.id}.html#{level.id}')
+        html_levels.append(f'<a href="{level_link}">{level.name}</a>')
+    all_levels = ', '.join(html_levels)
+    return f'<div><b style="font-size: 24px;">{hier.name}</b>: {all_levels}</div>'
 
 
 def build_entity(entity: Entity) -> str:
