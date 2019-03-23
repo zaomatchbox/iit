@@ -1,15 +1,16 @@
-from typing import Any, Iterable, Optional
-from uuid import uuid4
+from typing import Any, Iterable
 
+from .base import BaseSchemaModel
 from .hier import Hierarchy
 from .level import Level
 
 
-class Dimension:
+class Dimension(BaseSchemaModel):
 
     def __init__(self,
-                 name: str) -> None:
-        self.id = uuid4()
+                 name: str,
+                 *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.name = name
         self.levels = []
         self.hiers = []

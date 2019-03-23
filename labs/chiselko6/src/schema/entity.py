@@ -1,17 +1,18 @@
 from typing import Any, Dict
-from uuid import uuid4
 
+from .base import BaseSchemaModel
 from .dim import Dimension
 from .level import Level
 
 
-class Entity:
+class Entity(BaseSchemaModel):
 
     def __init__(self,
                  dim: Dimension,
                  level: Level,
-                 attrs: Dict[str, Any]) -> None:
-        self.id = uuid4()
+                 attrs: Dict[str, Any],
+                 *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.dim = dim
         self.level = level
         self.attrs = attrs

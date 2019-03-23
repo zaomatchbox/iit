@@ -112,6 +112,26 @@ class Parser:
                 self._state[-1]['levels'] = token
             else:
                 raise ValueError()
+        elif tag == 'Dim.Info':
+            if self._state[-1]['kind'] == 'dim':
+                self._state[-1]['info'] = token
+            else:
+                raise ValueError()
+        elif tag == 'Level.Info':
+            if self._state[-1]['kind'] == 'level':
+                self._state[-1]['info'] = token
+            else:
+                raise ValueError()
+        elif tag == 'Hier.Info':
+            if self._state[-1]['kind'] == 'hier':
+                self._state[-1]['info'] = token
+            else:
+                raise ValueError()
+        elif tag == 'Attr.Info':
+            if self._state[-1]['kind'] == 'attr':
+                self._state[-1]['info'] = token
+            else:
+                raise ValueError()
 
         self.try_record_node()
         self.reset_current_state()
@@ -124,27 +144,31 @@ class Parser:
         if len(self._state) == 0:
             return
         node = self._state[-1]
+        if self._state[-1].get('is_complete', False):
+            if 'info' in node:
+                self._objects[-1].info = node['info']
+            return
         kind = node['kind']
         if kind == 'dim':
             if 'name' in node:
-                self._state.pop()
+                self._state[-1]['is_complete'] = True
                 dim = Dimension(name=node['name'])
                 self._scope['dim'] = dim
                 self._objects.append(dim)
         elif kind == 'level':
             if 'name' in node:
-                self._state.pop()
+                self._state[-1]['is_complete'] = True
                 level = Level(name=node['name'])
                 self._scope['levels'][level.name] = level
                 self._objects.append(level)
         elif kind == 'attr':
             if 'name' in node and 'type' in node:
-                self._state.pop()
+                self._state[-1]['is_complete'] = True
                 attr = Attr(name=node['name'], type=node['type'])
                 self._objects.append(attr)
         elif kind == 'hier':
             if 'name' in node and 'levels' in node:
-                self._state.pop()
+                self._state[-1]['is_complete'] = True
                 hier = Hierarchy(name=node['name'])
                 levels = [l.strip() for l in node['levels'].split(',')]
                 hier.add_levels([self._scope['levels'][level]

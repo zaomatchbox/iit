@@ -1,14 +1,15 @@
 from typing import Any, Dict, Iterable
-from uuid import uuid4
 
 from .attr import Attr
+from .base import BaseSchemaModel
 
 
-class Level:
+class Level(BaseSchemaModel):
 
     def __init__(self,
-                 name: str) -> None:
-        self.id = uuid4()
+                 name: str,
+                 *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.name = name
         self.attrs = []
         self.dim = None

@@ -1,5 +1,6 @@
 {
   {Dim}: Location
+  {Dim.Info}: some useful info
 
   {Level}: store
   {Attr}: id
@@ -10,6 +11,7 @@
   {Attr.Type}: numeric
 
   {Level}: region
+  {Level.Info}: Region info here
   {Attr}: id
   {Attr.Type}: string
   {Attr}: label

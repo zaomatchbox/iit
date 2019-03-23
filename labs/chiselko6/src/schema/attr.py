@@ -1,13 +1,15 @@
 from typing import Any
-from uuid import uuid4
+
+from .base import BaseSchemaModel
 
 
-class Attr:
+class Attr(BaseSchemaModel):
 
     def __init__(self,
                  name: str,
-                 type: str) -> None:
-        self.id = uuid4()
+                 type: str,
+                 *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.name = name
         self.type = type
         self.level = None

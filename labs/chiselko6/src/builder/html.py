@@ -29,6 +29,7 @@ def gen_hier_link(hier: Hierarchy) -> str:
 
 def build_dim(dim: Dimension) -> str:
     initial = f'<h1>Dimension: <b>{dim.name}</b></h1>'
+    info = f'<h2>Info: {dim.info}</h2>'
     level_wrapper = '<div style="margin-left: 16px;">{}</div>'
     html_levels = []
     for level in dim.levels:
@@ -39,7 +40,7 @@ def build_dim(dim: Dimension) -> str:
         html_hiers.append(hier_wrapper.format(build_hierarchy(hier)))
     all_levels = ''.join(html_levels)
     all_hiers = ''.join(html_hiers)
-    return f'<div>{initial}<div></div>{all_levels}</div><div>{all_hiers}</div>'
+    return f'<div>{initial}</div><div>{info}</div><div>{all_levels}</div><div>{all_hiers}</div>'
 
 
 def build_level(level: Level) -> str:
@@ -67,31 +68,34 @@ def build_attr(attr: Attr) -> str:
 
 def build_extended_attr(attr: Attr) -> str:
     props = f'<div><h1>Attribute: <b>{attr.name}</b> ({ATTR_TYPES[attr.type]})</h1></div>'
+    info = f'<div><h2>Info: {attr.info}</h2></div>'
     level = f'<div><h3>Level:  <i><a href="{gen_level_link(attr.level)}">{attr.level.name}</a></i></h3></div>'
     dim = f'<div><span>Dimension: <a href="{gen_dim_link(attr.level.dim)}">{attr.level.dim.name}</a></span></div>'
-    return f'<div>{props}{level}{dim}</div>'
+    return f'<div>{props}{info}{level}{dim}</div>'
 
 
 def build_extended_level(level: Level) -> str:
     initial = f'<div><h1>Level: <b>{level.name}</b></h1></div>'
+    info = f'<div><h2>Info: {level.info}</h2></div>'
     dim = f'<div><h3>Dimension: <i><a href="{gen_dim_link(level.dim)}">{level.dim.name}</a></i></h3></div>'
     mapped = []
     attr_wrapper = '<div style="margin-left: 32px;">{}</div>'
     for attr in level.attrs:
         mapped.append(attr_wrapper.format(build_attr(attr)))
     all_attrs = ''.join(mapped)
-    return f'<div>{initial}{dim}{all_attrs}</div>'
+    return f'<div>{initial}{info}{dim}{all_attrs}</div>'
 
 
 def build_extended_hierarchy(hier: Hierarchy) -> str:
     initial = f'<div><h1>Hierarchy: <b>{hier.name}</b></h1></div>'
+    info = f'<div><h2>Info: {hier.info}</h2></div>'
     dim = f'<div><h3>Dimension: <i><a href="{gen_dim_link(hier.dim)}">{hier.dim.name}</a></i></h3></div>'
     html_levels = []
     for level in hier.levels:
         html_levels.append(
             f'<a href="{gen_level_link(level)}">{level.name}</a>')
     all_levels = ', '.join(html_levels)
-    return f'<div>{initial}{dim}<div><h3>Levels: {all_levels}</h3></div></div>'
+    return f'<div>{initial}{info}{dim}<div><h3>Levels: {all_levels}</h3></div></div>'
 
 
 def build_entity(entity: Entity) -> str:
