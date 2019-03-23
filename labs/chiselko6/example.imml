@@ -1,0 +1,39 @@
+{
+  {Dim}: Location
+
+  {Level}: store
+  {Attr}: id
+  {Attr.Type}: string
+  {Attr}: label
+  {Attr.Type}: string
+  {Attr}: num
+  {Attr.Type}: numeric
+
+  {Level}: region
+  {Attr}: id
+  {Attr.Type}: string
+  {Attr}: label
+  {Attr.Type}: string
+  {Attr}: num
+  {Attr.Type}: numeric
+
+  {Level}: country
+  {Attr}: id
+  {Attr.Type}: uuid la
+  {Attr}: label
+  {Attr.Type}: string
+  {Attr}: num
+  {Attr.Type}: numeric
+
+  {Level}: vendor
+  {Attr}: id
+  {Attr.Type}: string
+  {Attr}: label
+  {Attr.Type}: string
+
+  {Hier}: Vendor
+  {Hier.Levels}: store, vendor
+
+  {Hier}: Geographic
+  {Hier.Levels}: store, region, country, vendor
+}

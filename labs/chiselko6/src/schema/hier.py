@@ -17,6 +17,10 @@ class Hierarchy:
         self.levels.append(level)
         return self
 
+    def add_levels(self, levels: Iterable[Level]) -> 'Hierarchy':
+        self.levels.extend(levels)
+        return self
+
     def assign_dim(self, dim: 'Dimension') -> 'Hierarchy':
         self.dim = dim
         return self

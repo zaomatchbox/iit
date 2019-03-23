@@ -15,3 +15,9 @@ HTML_TEMPLATE = '''
   </body>
 </html>
 '''
+
+ATTR_TYPES = {
+    'numeric': 'Num',
+    'string': 'Str',
+    'uuid la': 'UUID',
+}

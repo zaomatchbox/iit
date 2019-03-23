@@ -8,7 +8,7 @@ from ..schema.entity import Entity
 from ..schema.hier import Hierarchy
 from ..schema.level import Level
 
-from .constants import DIR
+from .constants import ATTR_TYPES, DIR
 
 
 def build_dim(dim: Dimension) -> str:
@@ -37,11 +37,7 @@ def build_level(level: Level) -> str:
 
 
 def build_attr(attr: Attr) -> str:
-    format = {
-        'numeric': 'Num',
-        'string': 'Str',
-    }
-    return f'<span id={attr.id} style="font-size: 16px;">{attr.name}({format[attr.type]})</span>'
+    return f'<span id={attr.id} style="font-size: 16px;">{attr.name}({ATTR_TYPES[attr.type]})</span>'
 
 
 def build_hierarchy(hier: Hierarchy) -> str:
