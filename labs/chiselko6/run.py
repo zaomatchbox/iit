@@ -1,4 +1,4 @@
-from src.builder.html import build
+from src.builder.html.gen import build
 from src.gen import gen_dims, gen_entities
 from src.parser.parser import Parser
 

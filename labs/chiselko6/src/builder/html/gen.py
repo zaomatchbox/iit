@@ -2,29 +2,16 @@ from typing import Iterable
 import os
 import shutil
 
-from ..schema.attr import Attr
-from ..schema.dim import Dimension
-from ..schema.entity import Entity
-from ..schema.hier import Hierarchy
-from ..schema.level import Level
+from ...schema.attr import Attr
+from ...schema.dim import Dimension
+from ...schema.entity import Entity
+from ...schema.hier import Hierarchy
+from ...schema.level import Level
 
 from .constants import ATTR_TYPES, DIR
-
-
-def gen_dim_link(dim: Dimension) -> str:
-    return os.path.join(DIR, f'dim/{dim.id}.html')
-
-
-def gen_level_link(level: Level) -> str:
-    return os.path.join(DIR, f'level/{level.id}.html')
-
-
-def gen_attr_link(attr: Attr) -> str:
-    return os.path.join(DIR, f'attr/{attr.id}.html')
-
-
-def gen_hier_link(hier: Hierarchy) -> str:
-    return os.path.join(DIR, f'hier/{hier.id}.html')
+from .links import (
+    gen_attr_link, gen_dim_link, gen_hier_link, gen_level_link
+)
 
 
 def build_dim(dim: Dimension) -> str:
@@ -59,7 +46,7 @@ def build_hierarchy(hier: Hierarchy) -> str:
         html_levels.append(
             f'<a href="{gen_level_link(level)}">{level.name}</a>')
     all_levels = ', '.join(html_levels)
-    return f'<div><b style="font-size: 24px;">{hier.name}</b>: {all_levels}</div>'
+    return f'<div><b style="font-size: 24px;"><a href="{gen_hier_link(hier)}">{hier.name}</a></b>: {all_levels}</div>'
 
 
 def build_attr(attr: Attr) -> str:
@@ -137,7 +124,7 @@ def build(dims: Iterable[Dimension], entities: Iterable[Entity]) -> None:
                     fout.write(res)
         for hier in dim.hiers:
             res = build_extended_hierarchy(hier)
-            with open(os.path.join(DIR, f'hier/{level.id}.html'), 'w') as fout:
+            with open(os.path.join(DIR, f'hier/{hier.id}.html'), 'w') as fout:
                 fout.write(res)
     for e in entities:
         res = build_entity(e)
