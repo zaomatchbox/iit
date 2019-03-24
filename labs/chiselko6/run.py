@@ -2,6 +2,7 @@ import os
 
 from src.builder.html.constants import DIR
 from src.builder.html.gen import build
+from src.docs.constants import MAX_DISTANCE
 from src.docs.index import Indexer
 from src.docs.linker import to_doc
 from src.gen import gen_dims, gen_entities
@@ -39,7 +40,9 @@ if __name__ == '__main__':
             src, dest = input().split()
             src = os.path.join(DIR, src.strip())
             dest = os.path.join(DIR, dest.strip())
-            print(index.get_distance(src, dest))
+            dist = index.get_distance(src, dest)
+            if dist == MAX_DISTANCE:
+                print('Not connected')
         else:
             relevant_docs = index.search(query)
             print('Result:')

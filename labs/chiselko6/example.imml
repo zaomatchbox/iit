@@ -40,3 +40,25 @@
   {Hier.Info}: Bla bla geography
   {Hier.Levels}: store, region, country, vendor
 }
+
+
+{
+  {Dim}: Product
+  {Dim.Info}: product information
+
+  {Level}: item
+  {Attr}: label
+  {Attr.Type}: string
+  {Attr}: PLN
+  {Attr.Type}: string
+
+  {Level}: class
+  {Attr}: id
+  {Attr.Type}: string
+  {Attr}: label
+  {Attr.Type}: string
+
+  {Hier}: Basic
+  {Hier.Levels}: item, class
+
+}
