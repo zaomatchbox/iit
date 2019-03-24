@@ -37,5 +37,6 @@
   {Hier.Levels}: store, vendor
 
   {Hier}: Geographic
+  {Hier.Info}: Bla bla geography
   {Hier.Levels}: store, region, country, vendor
 }

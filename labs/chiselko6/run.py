@@ -1,4 +1,6 @@
 from src.builder.html.gen import build
+from src.docs.index import Indexer
+from src.docs.linker import to_doc
 from src.gen import gen_dims, gen_entities
 from src.parser.parser import Parser
 
@@ -22,4 +24,15 @@ if __name__ == '__main__':
     model = try_parse()
     print(len(model))
     print(len(model[0].levels))
-    build(model, [])
+    items = build(model, [])
+    index = Indexer()
+    for item in items:
+        index.add(to_doc(item))
+    index.index()
+    while True:
+        print('Enter your query:', end=' ')
+        query = input()
+        relevant_docs = index.search(query)
+        print('Result:')
+        for doc in relevant_docs:
+            print(f'{doc.name}: {doc.gate}')

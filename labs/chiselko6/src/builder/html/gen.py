@@ -1,8 +1,9 @@
-from typing import Iterable
+from typing import Iterable, List
 import os
 import shutil
 
 from ...schema.attr import Attr
+from ...schema.base import BaseSchemaModel
 from ...schema.dim import Dimension
 from ...schema.entity import Entity
 from ...schema.hier import Hierarchy
@@ -102,7 +103,7 @@ def build_entity(entity: Entity) -> str:
     )
 
 
-def build(dims: Iterable[Dimension], entities: Iterable[Entity]) -> None:
+def build(dims: Iterable[Dimension], entities: Iterable[Entity]) -> List[BaseSchemaModel]:
     if os.path.exists(DIR):
         shutil.rmtree(DIR)
     os.makedirs(os.path.join(DIR, 'entity'))
@@ -110,23 +111,30 @@ def build(dims: Iterable[Dimension], entities: Iterable[Entity]) -> None:
     os.makedirs(os.path.join(DIR, 'level'))
     os.makedirs(os.path.join(DIR, 'hier'))
     os.makedirs(os.path.join(DIR, 'attr'))
+    items: List[BaseSchemaModel] = []
     for dim in dims:
+        items.append(dim)
         res = build_dim(dim)
         with open(os.path.join(DIR, f'dim/{dim.id}.html'), 'w') as fout:
             fout.write(res)
         for level in dim.levels:
+            items.append(level)
             res = build_extended_level(level)
             with open(os.path.join(DIR, f'level/{level.id}.html'), 'w') as fout:
                 fout.write(res)
             for attr in level.attrs:
+                items.append(attr)
                 res = build_extended_attr(attr)
                 with open(os.path.join(DIR, f'attr/{attr.id}.html'), 'w') as fout:
                     fout.write(res)
         for hier in dim.hiers:
+            items.append(hier)
             res = build_extended_hierarchy(hier)
             with open(os.path.join(DIR, f'hier/{hier.id}.html'), 'w') as fout:
                 fout.write(res)
     for e in entities:
+        items.append(e)
         res = build_entity(e)
         with open(os.path.join(DIR, f'entity/{e.id}.html'), 'w') as fout:
             fout.write(res)
+    return items
