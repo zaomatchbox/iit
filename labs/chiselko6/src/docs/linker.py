@@ -11,13 +11,16 @@ from .models import Document
 
 def to_doc(obj: BaseSchemaModel) -> Document:
     if isinstance(obj, Attr):
+        links = [gen_dim_link(obj.level.dim), gen_level_link(obj.level)]
         return Document(name=obj.name,
                         content=obj.info,
-                        links=[gen_level_link(obj.level)],
+                        links=links,
                         gate=gen_attr_link(obj))
     if isinstance(obj, Dimension):
         links = [gen_hier_link(hier) for hier in obj.hiers]
-        links.extend([gen_level_link(level) for level in obj.levels])
+        for level in obj.levels:
+            links.append(gen_level_link(level))
+            links.extend([gen_attr_link(attr) for attr in level.attrs])
         return Document(name=obj.name,
                         content=obj.info,
                         links=links,

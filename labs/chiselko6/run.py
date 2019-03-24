@@ -1,3 +1,6 @@
+import os
+
+from src.builder.html.constants import DIR
 from src.builder.html.gen import build
 from src.docs.index import Indexer
 from src.docs.linker import to_doc
@@ -32,7 +35,13 @@ if __name__ == '__main__':
     while True:
         print('Enter your query:', end=' ')
         query = input()
-        relevant_docs = index.search(query)
-        print('Result:')
-        for doc in relevant_docs:
-            print(f'{doc.name}: {doc.gate}')
+        if query == 'get_distance':
+            src, dest = input().split()
+            src = os.path.join(DIR, src.strip())
+            dest = os.path.join(DIR, dest.strip())
+            print(index.get_distance(src, dest))
+        else:
+            relevant_docs = index.search(query)
+            print('Result:')
+            for doc in relevant_docs:
+                print(f'{doc.name}: {doc.gate}')
